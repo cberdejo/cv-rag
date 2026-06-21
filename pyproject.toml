@@ -1,0 +1,61 @@
+[project]
+name = "cv-rag"
+version = "0.1.0"
+description = "A chat application that allows a user to ask questions about a collection of résumés (CVs)."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "chainlit>=2.11.1",
+    "email-validator>=2.3.0",
+    "faker>=40.21.0",
+    "fastapi>=0.136.3",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.6",
+    "langchain-core>=1.0.0",
+    "langgraph>=1.0.0",
+    "loguru>=0.7.3",
+    "minio>=7.2.20",
+    "openai>=2.41.0",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.1",
+    "pypdf>=6.4.1",
+    "qdrant-client[fastembed]>=1.16.2",
+    "tqdm>=4.68.1",
+    "typer>=0.26.7",
+    "uvicorn[standard]>=0.38.0",
+    "weasyprint>=67.0",
+]
+
+[project.scripts]
+cv-rag = "cv_rag.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.15.16",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/cv_rag",
+    "src/core",
+    "src/infrastructure",
+    "src/cv_factory",
+    "src/cv_ingestion",
+    "src/rag",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = ["-v", "--tb=short"]
+markers = [
+    "unit: Pure unit tests with no I/O",
+    "integration: Tests that exercise multiple components together",
+]

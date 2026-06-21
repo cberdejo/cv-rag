@@ -216,3 +216,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project runtime / generated artifacts
+logs/
+output/
+outputs/
+repomix-output.xml
+.chainlit/
+.files/
+artifacts/
