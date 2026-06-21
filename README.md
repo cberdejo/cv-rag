@@ -44,7 +44,7 @@ CV Factory -> Artifact Storage -> CV Ingestion -> Qdrant Index -> RAG Assistant
   Faker/LLM     local/MinIO       PDF parsing      hybrid        FastAPI
   rendering                     normalization     retrieval      Chainlit
 ```
-
+![arq overview](docs/overview.png)
 ## Modules
 
 ### `cv_factory`
