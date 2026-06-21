@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ cv.name }} - CV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #17202a;
+      background: #ffffff;
+      font-size: 10pt;
+      line-height: 1.42;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 34%;
+      background: #111827;
+      z-index: 0;
+    }
+    .cv {
+      min-height: 297mm;
+      display: grid;
+      grid-template-columns: 34% 66%;
+      position: relative;
+      z-index: 1;
+    }
+    aside {
+      background: #111827;
+      color: #f9fafb;
+      padding: 20mm 10mm 16mm;
+    }
+    main { padding: 20mm 14mm 16mm; background: #ffffff; }
+    .photo-wrap { text-align: center; margin-bottom: 18px; }
+    .photo {
+      width: 112px;
+      height: 112px;
+      border-radius: 18px;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,.45);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 25pt;
+      line-height: 1.05;
+      letter-spacing: -.03em;
+    }
+    .headline { color: #4b5563; font-size: 11pt; margin-bottom: 18px; }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 10pt;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #111827;
+      border-bottom: 1px solid #d1d5db;
+      padding-bottom: 4px;
+    }
+    aside h2 { color: #f9fafb; border-bottom-color: rgba(255,255,255,.35); }
+    section { margin-bottom: 18px; page-break-inside: avoid; }
+    .contact div { margin-bottom: 7px; overflow-wrap: anywhere; }
+    .skills { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .skills li { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); padding: 5px 7px; border-radius: 6px; }
+    .item { margin-bottom: 14px; page-break-inside: avoid; }
+    .item-head { display: flex; justify-content: space-between; gap: 14px; align-items: baseline; }
+    .role, .degree { font-weight: 700; font-size: 11pt; }
+    .company, .institution { color: #374151; margin-top: 2px; }
+    .period { color: #6b7280; white-space: nowrap; font-size: 9pt; }
+    p { margin: 6px 0 0; }
+    .education-card { border-left: 3px solid #111827; padding-left: 9px; }
+    @media print { body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
+  </style>
+</head>
+<body>
+  <div class="cv">
+    <aside>
+      {% if photo_url %}<div class="photo-wrap"><img class="photo" src="{{ photo_url }}" alt="{{ cv.name }} photo" /></div>{% endif %}
+      <section>
+        {% if section_titles.contact %}<h2>{{ section_titles.contact }}</h2>{% endif %}
+        <div class="contact">
+          <div>{{ cv.email }}</div>
+          <div>{{ cv.phone }}</div>
+        </div>
+      </section>
+      {% if cv.skills %}
+      <section>
+        {% if section_titles.skills %}<h2>{{ section_titles.skills }}</h2>{% endif %}
+        <ul class="skills">
+          {% for skill in cv.skills %}<li>{{ skill }}</li>{% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+    </aside>
+
+    <main>
+      <header>
+        <h1>{{ cv.name }}</h1>
+        {% if cv.experience %}<div class="headline">{{ cv.experience[0].title }}</div>{% endif %}
+      </header>
+
+      <section>
+        {% if section_titles.about %}<h2>{{ section_titles.about }}</h2>{% endif %}
+        <p>{{ cv.about }}</p>
+      </section>
+
+      {% if cv.experience %}
+      <section>
+        {% if section_titles.experience %}<h2>{{ section_titles.experience }}</h2>{% endif %}
+        {% for exp in cv.experience %}
+        <article class="item">
+          <div class="item-head">
+            <div>
+              <div class="role">{{ exp.title }}</div>
+              <div class="company">{{ exp.company }}</div>
+            </div>
+            <div class="period">{{ exp.period.start_date.strftime('%Y') }} – {% if exp.period.end_date %}{{ exp.period.end_date.strftime('%Y') }}{% else %}Present{% endif %}</div>
+          </div>
+          <p>{{ exp.description }}</p>
+        </article>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if cv.education %}
+      <section>
+        {% if section_titles.education %}<h2>{{ section_titles.education }}</h2>{% endif %}
+        {% for edu in cv.education %}
+        <article class="item education-card">
+          <div class="item-head">
+            <div>
+              <div class="degree">{{ edu.title }}</div>
+              <div class="institution">{{ edu.institution }}{% if edu.gpa is not none %} · GPA {{ '%.1f'|format(edu.gpa) }}/10{% endif %}</div>
+            </div>
+            <div class="period">{{ edu.period.start_date.strftime('%Y') }} – {% if edu.period.end_date %}{{ edu.period.end_date.strftime('%Y') }}{% else %}Present{% endif %}</div>
+          </div>
+          {% if edu.description %}<p>{{ edu.description }}</p>{% endif %}
+        </article>
+        {% endfor %}
+      </section>
+      {% endif %}
+    </main>
+  </div>
+</body>
+</html>
