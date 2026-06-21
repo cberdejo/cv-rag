@@ -34,7 +34,7 @@ candidate database.
 
 - Python 3.11+
 - [uv](https://docs.astral.sh/uv/)
-- Docker and Docker Compose (for Ollama, LiteLLM, MinIO, and Qdrant)
+- Docker and Docker Compose (for LiteLLM, MinIO, and Qdrant)
 
 ## High-Level Architecture
 
@@ -105,7 +105,7 @@ Create local environment settings:
 cp .env.example .env
 ```
 
-Start local services (Ollama, LiteLLM, MinIO, Qdrant):
+Start local services (LiteLLM, MinIO, Qdrant):
 
 ```bash
 docker compose up -d
@@ -116,7 +116,6 @@ docker compose up -d
 | LiteLLM proxy | `http://localhost:4000` |
 | MinIO API / console | `http://localhost:9100` / `http://localhost:9101` |
 | Qdrant | `http://localhost:6333` |
-| Ollama | `http://localhost:11434` |
 
 Generate sample CVs:
 
@@ -149,8 +148,10 @@ uv run pytest
 
 ## Changing LLM Models
 
-cv-rag calls an OpenAI-compatible LiteLLM proxy. The default local setup uses
-Ollama through `litellm_config.yaml`.
+cv-rag calls an OpenAI-compatible LiteLLM proxy. LiteLLM acts as a unified
+gateway, so the underlying provider can be anything it supports — Ollama, a
+self-hosted vLLM/OpenAI-compatible endpoint, or any of the providers listed
+in the [LiteLLM Providers docs](https://docs.litellm.ai/docs/providers).
 
 The application-level model names are configured with environment variables:
 
@@ -165,19 +166,24 @@ CV_LITELLM_BASE_URL=http://localhost:4000
 - `CV_LLM_QUALITY_MODEL` is used for higher-quality CV enrichment.
 - `CV_LITELLM_BASE_URL` points the application to the LiteLLM proxy.
 
-To change the underlying provider or model, edit `litellm_config.yaml`:
+To change the underlying provider or model, edit `litellm_config.yaml`. Each
+entry's `model` and `api_base` follow the syntax of the corresponding
+provider in the [LiteLLM Providers docs](https://docs.litellm.ai/docs/providers),
+for example:
 
 ```yaml
 model_list:
   - model_name: default-llm
     litellm_params:
-      model: ollama/llama3:8b
-      api_base: http://ollama:11434
+      model: openai/your-model-name
+      api_base: http://your-inference-server:8000/v1
+      api_key: not-needed
 
   - model_name: quality-llm
     litellm_params:
-      model: ollama/llama3:8b
-      api_base: http://ollama:11434
+      model: openai/your-model-name
+      api_base: http://your-inference-server:8000/v1
+      api_key: not-needed
 ```
 
 Keep `model_name` aligned with `CV_LLM_DEFAULT_MODEL` and
@@ -186,9 +192,6 @@ Keep `model_name` aligned with `CV_LLM_DEFAULT_MODEL` and
 ```bash
 docker compose restart litellm
 ```
-
-When using a different Ollama model, also pull it in the Ollama container or
-adjust the `ollama-pull` service in `docker-compose.yaml`.
 
 ## Storage and Indexing
 
