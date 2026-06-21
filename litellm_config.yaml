@@ -1,0 +1,13 @@
+model_list:
+  - model_name: default-llm
+    litellm_params:
+      model: openai/NousResearch/Hermes-4.3-36B
+      api_base: http://192.168.212.254:8002/v1
+      api_key: not-needed
+
+  - model_name: quality-llm
+    litellm_params:
+      model: openai/NousResearch/Hermes-4.3-36B
+      api_base: http://192.168.212.254:8002/v1
+      api_key: not-needed
+
